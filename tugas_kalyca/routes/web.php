@@ -13,15 +13,6 @@ Route::get('/', function () {
 });
 require __DIR__.'/auth.php';
 
-Route::get('/test-db', function () {
-    try {
-        DB::connection()->getPdo();
-        return "✅ Koneksi database berhasil!";
-    } catch (\Exception $e) {
-        return "❌ Gagal terkoneksi ke database: " . $e->getMessage();
-    }
-});
-
 // Dashboard
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -59,3 +50,11 @@ Route::get('/laporan/pdf/ppn-keluaran', [LaporanController::class, 'cetakPpnKelu
 Route::get('/laporan/pdf/selisih-ppn', [LaporanController::class, 'cetakSelisihPpn'])->name('laporan.pdf.selisih_ppn');
 Route::get('/laporan/pdf/rekapitulasi', [LaporanController::class, 'cetakRekapitulasi'])->name('laporan.pdf.rekapitulasi');
 
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return "✅ Koneksi database berhasil!";
+    } catch (\Exception $e) {
+        return "❌ Gagal terkoneksi ke database: " . $e->getMessage();
+    }
+});
