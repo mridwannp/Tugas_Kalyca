@@ -47,14 +47,18 @@ class LaporanController extends Controller
 
     public function cetakPpnMasukan(Request $request)
     {
-        $bulan = $request->input('bulan', date('m')); // default ke bulan sekarang
+        $bulan = str_pad($request->input('bulan', date('m')), 2, '0', STR_PAD_LEFT);
         $tahun = $request->input('tahun', date('Y'));
-
+    
         $pengeluaran_barang = Pengeluaran::where('kategori', 'Stok Barang')
             ->whereMonth('tanggal_transaksi', $bulan)
             ->whereYear('tanggal_transaksi', $tahun)
             ->get();
-
+    
+        if ($pengeluaran_barang->isEmpty()) {
+            return back()->with('error', 'Tidak ada data pengeluaran stok barang untuk bulan dan tahun ini.');
+        }
+    
         $pdf = PDF::loadView('laporan.pdf.ppn_masukan', compact('pengeluaran_barang', 'bulan', 'tahun'));
         return $pdf->download("laporan-ppn-masukan-{$bulan}-{$tahun}.pdf");
     }
