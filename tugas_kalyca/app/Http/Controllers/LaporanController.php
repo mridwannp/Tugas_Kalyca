@@ -50,8 +50,7 @@ class LaporanController extends Controller
         $bulan = str_pad($request->input('bulan', date('m')), 2, '0', STR_PAD_LEFT);
         $tahun = $request->input('tahun', date('Y'));
     
-        $pengeluaran_barang = Pengeluaran::where('kategori', 'Stok Barang')
-            ->whereMonth('tanggal_transaksi', $bulan)
+        $pengeluaran_barang = Pengeluaran::whereMonth('tanggal_transaksi', $bulan)
             ->whereYear('tanggal_transaksi', $tahun)
             ->get();
     
