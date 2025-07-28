@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Toko Kalyca</title>
+    <title>Login - Gudang Baju Anak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Bootstrap 5 CDN -->
