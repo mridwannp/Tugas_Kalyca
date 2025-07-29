@@ -8,9 +8,25 @@
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #000; padding: 8px; text-align: right; }
         th { background-color: #f2f2f2; text-align: center; }
+        .header, .footer { text-align: center; }
+        .footer-right {
+            position: absolute;
+            bottom: 50px;
+            right: 40px;
+            text-align: right;
+        }
+        .icon {
+            width: 60px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        <img src="{{ public_path('shop.png') }}" alt="Logo">
+        <h3>Gudang Baju Anak</h3>
+    </div>
+
     <h2 align="center">Laporan Rekapitulasi PPN</h2>
     <table>
         <thead>
@@ -30,5 +46,12 @@
             </tr>
         </tbody>
     </table>
+
+    <div class="footer-right">
+        <p>Bandung, {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
+        <br><br>
+        <p>___________________________</p>
+        <p>Tanda Tangan</p>
+    </div>
 </body>
 </html>
