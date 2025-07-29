@@ -59,7 +59,7 @@
 <body>
 
     <div class="header">
-        <img src="https://img.icons8.com/color/96/shop.png" alt="Toko Kalyca">
+        <img src="{{ public_path('shop.png') }}" alt="Logo">
         <h2>Gudang Baju Anak</h2>
     </div>
 
