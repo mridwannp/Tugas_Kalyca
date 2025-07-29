@@ -3,15 +3,57 @@
 <head>
     <title>Laporan PPN Masukan</title>
     <style>
-        body { font-family: sans-serif; font-size: 12px; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 6px; text-align: left; }
-        .header { text-align: center; margin-bottom: 10px; }
-        .header img { width: 60px; }
-        .header h2 { margin: 4px 0 0 0; font-size: 16px; }
-        .footer { margin-top: 60px; text-align: right; }
-        .signature { margin-top: 60px; text-align: right; }
-        .signature p { margin-bottom: 60px; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 60px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: left;
+        }
+        .total {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+        }
+        .signature {
+            margin-top: 60px;
+            text-align: right;
+        }
+        .signature p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -22,7 +64,7 @@
     </div>
 
     <h3>Laporan PPN Masukan</h3>
-    <p>Bulan: {{ $bulan }} / Tahun: {{ $tahun }}</p>
+    <p><strong>Bulan:</strong> {{ $bulan }} / <strong>Tahun:</strong> {{ $tahun }}</p>
 
     <table>
         <thead>
@@ -43,14 +85,15 @@
         </tbody>
     </table>
 
-    <h4>Total PPN Masukan: Rp{{ number_format($pengeluaran_barang->sum('ppn'), 0, ',', '.') }}</h4>
+    <p class="total">Total PPN Masukan: Rp{{ number_format($pengeluaran_barang->sum('ppn'), 0, ',', '.') }}</p>
 
     <div class="footer">
-        <p>Kota, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-        <div class="signature">
-            <p>.....................................................</p>
-            <p>Tanda Tangan</p>
-        </div>
+        <p>Bandung, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+    </div>
+
+    <div class="signature">
+        <p>.....................................................</p>
+        <p><strong>Tanda Tangan</strong></p>
     </div>
 
 </body>
