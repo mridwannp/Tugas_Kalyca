@@ -4,14 +4,26 @@
     <meta charset="utf-8">
     <title>Laporan PPN Keluaran</title>
     <style>
-        body { font-family: sans-serif; }
+        body { font-family: sans-serif; font-size: 12px; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #000; padding: 6px; text-align: left; }
+        .header { text-align: center; margin-bottom: 10px; }
+        .header img { width: 60px; }
+        .header h2 { margin: 4px 0 0 0; font-size: 16px; }
+        .footer { margin-top: 60px; text-align: right; }
+        .signature { margin-top: 60px; text-align: right; }
+        .signature p { margin-bottom: 60px; }
     </style>
 </head>
 <body>
-    <h2>Laporan PPN Keluaran</h2>
-    <p>Bulan: {{ $bulan }}, Tahun: {{ $tahun }}</p>
+
+    <div class="header">
+        <img src="{{ public_path('shop.png') }}" alt="Logo">
+        <h2>Gudang Baju Anak</h2>
+    </div>
+
+    <h3>Laporan PPN Keluaran</h3>
+    <p>Bulan: {{ $bulan }} / Tahun: {{ $tahun }}</p>
 
     <table>
         <thead>
@@ -23,17 +35,24 @@
         </thead>
         <tbody>
             @foreach ($masukan as $item)
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('d M Y') }}</td>
-                    <td>{{ $item->jenis_produk ?? '-' }}</td>
-                    <td>Rp{{ number_format($item->ppn, 0, ',', '.') }}</td>
-                </tr>
+            <tr>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('d M Y') }}</td>
+                <td>{{ $item->jenis_produk ?? '-' }}</td>
+                <td>Rp{{ number_format($item->ppn, 0, ',', '.') }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
 
-    <h4 style="text-align:right; margin-top: 20px;">
-        Total PPN Keluaran: Rp{{ number_format($masukan->sum('ppn'), 0, ',', '.') }}
-    </h4>
+    <h4>Total PPN Keluaran: Rp{{ number_format($masukan->sum('ppn'), 0, ',', '.') }}</h4>
+
+    <div class="footer">
+        <p>Bandung, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+        <div class="signature">
+            <p>.....................................................</p>
+            <p>Tanda Tangan</p>
+        </div>
+    </div>
+
 </body>
 </html>
