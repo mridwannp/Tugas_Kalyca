@@ -30,37 +30,45 @@
         </a>
     </div>
 
+    @php
+        $flattenedData = [];
+        foreach($data as $jenis => $items) {
+            foreach($items as $item) {
+                $item->jenis = $jenis;
+                $flattenedData[] = $item;
+            }
+        }
+    @endphp
 
-    @forelse($data as $jenis => $items)
-        <div class="mb-4">
-            <h5>{{ $jenis }}</h5>
-            <table class="table table-bordered">
-                <thead>
+    @if(count($flattenedData) > 0)
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Jenis</th>
+                    <th>Jumlah</th>
+                    <th>Harga Satuan</th>
+                    <th>Subtotal</th>
+                    <th>PPN</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($flattenedData as $item)
                     <tr>
-                        <th>Tanggal</th>
-                        <th>Jumlah</th>
-                        <th>Harga Satuan</th>
-                        <th>Subtotal</th>
-                        <th>PPN</th>
-                        <th>Total</th>
+                        <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('d M Y') }}</td>
+                        <td>{{ $item->jenis }}</td>
+                        <td>{{ $item->jumlah }}</td>
+                        <td>Rp{{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+                        <td>Rp{{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        <td>Rp{{ number_format($item->ppn, 0, ',', '.') }}</td>
+                        <td>Rp{{ number_format($item->total, 0, ',', '.') }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach($items as $item)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('d M Y') }}</td>
-                            <td>{{ $item->jumlah }}</td>
-                            <td>Rp{{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-                            <td>Rp{{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                            <td>Rp{{ number_format($item->ppn, 0, ',', '.') }}</td>
-                            <td>Rp{{ number_format($item->total, 0, ',', '.') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @empty
+                @endforeach
+            </tbody>
+        </table>
+    @else
         <div class="alert alert-info">Tidak ada data transaksi untuk bulan ini.</div>
-    @endforelse
+    @endif
 </div>
 @endsection
