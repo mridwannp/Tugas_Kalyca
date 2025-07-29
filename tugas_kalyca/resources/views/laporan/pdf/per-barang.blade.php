@@ -20,7 +20,7 @@
 <body>
     <!-- Logo -->
     <div class="text-center">
-        <img src="{{ public_path('logo.png') }}" class="logo">
+        <img src="{{ public_path('shop.png') }}" class="logo">
     </div>
 
     <h4 class="text-center">Laporan Per Barang - {{ DateTime::createFromFormat('!m', $bulan)->format('F') }} {{ $tahun }}</h4>
