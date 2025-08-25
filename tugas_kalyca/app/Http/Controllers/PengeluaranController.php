@@ -2,152 +2,99 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengeluaran;
 use Illuminate\Http\Request;
+use App\Models\Pengeluaran;
 
 class PengeluaranController extends Controller
 {
-    /**
-     * Menampilkan semua data pengeluaran
-     */
     public function index()
     {
-        $pengeluarans = Pengeluaran::latest()->get();
-        return view('pengeluaran.index', compact('pengeluarans'));
+        $keluarans = Pengeluaran::latest()->paginate(10);
+        return view('pengeluaran.index', compact('keluarans'));
     }
 
-    /**
-     * Form tambah pengeluaran
-     */
     public function create()
     {
         return view('pengeluaran.create');
     }
 
-    /**
-     * Simpan data pengeluaran baru
-     */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'tanggal_transaksi' => 'required|date',
-            'nomor_faktur'      => 'nullable|string|max:50',
-            'nama_supplier'     => 'nullable|string|max:100',
-            'jenis_pengeluaran' => 'required|string|max:100',
-            'jumlah'            => 'required|numeric|min:1',
-            'harga_satuan'      => 'required|numeric|min:0',
-            'harga_sudah_ppn'   => 'nullable|boolean',
+            'kategori' => 'required|string',
+            'jenis_produk' => 'required|string',
+            'keterangan' => 'nullable|string',
+            'jumlah_barang' => 'nullable|integer',
+            'harga_satuan' => 'nullable|numeric',
             'metode_pembayaran' => 'required|string',
-            'catatan'           => 'nullable|string',
-            'bukti_transaksi'   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'catatan' => 'nullable|string',
+            'bukti' => 'nullable|image|max:2048'
         ]);
 
-        // Hitung subtotal
-        $subtotal = $request->jumlah * $request->harga_satuan;
+        // Hitung subtotal dan PPN
+        $subtotal = ($data['jumlah_barang'] ?? 0) * ($data['harga_satuan'] ?? 0);
+        $ppn = $subtotal > 0 ? $subtotal * 0.11 : 0;
+        $total = $subtotal + $ppn;
 
-        // Hitung PPN
-        if ($request->harga_sudah_ppn) {
-            $dasar = (100 / 112) * $subtotal;
-            $ppn   = 0.12 * $dasar;
-            $total = $subtotal;
-        } else {
-            $ppn   = 0.11 * $subtotal;
-            $total = $subtotal + $ppn;
+        $data['subtotal'] = $subtotal;
+        $data['ppn'] = $ppn;
+        $data['total'] = $total;
+
+        if ($request->hasFile('bukti')) {
+            $data['bukti'] = $request->file('bukti')->store('bukti_pengeluaran', 'public');
         }
 
-        // Upload bukti transaksi
-        $buktiPath = null;
-        if ($request->hasFile('bukti_transaksi')) {
-            $buktiPath = $request->file('bukti_transaksi')->store('bukti_pengeluaran', 'public');
-        }
+        Pengeluaran::create($data);
 
-        Pengeluaran::create([
-            'tanggal_transaksi' => $request->tanggal_transaksi,
-            'nomor_faktur'      => $request->nomor_faktur,
-            'nama_supplier'     => $request->nama_supplier,
-            'jenis_pengeluaran' => $request->jenis_pengeluaran,
-            'jumlah'            => $request->jumlah,
-            'harga_satuan'      => $request->harga_satuan,
-            'subtotal'          => $subtotal,
-            'ppn'               => $ppn,
-            'total'             => $total,
-            'harga_sudah_ppn'   => $request->harga_sudah_ppn ?? 0,
-            'metode_pembayaran' => $request->metode_pembayaran,
-            'catatan'           => $request->catatan,
-            'bukti_transaksi'   => $buktiPath,
-        ]);
-
-        return redirect()->route('pengeluaran.index')->with('success', 'Data pengeluaran berhasil ditambahkan.');
+        return redirect()->route('pengeluaran.index')->with('success', 'Data pengeluaran berhasil disimpan.');
     }
 
-    /**
-     * Form edit pengeluaran
-     */
-    public function edit(Pengeluaran $pengeluaran)
+    public function edit($id)
     {
+        $pengeluaran = Pengeluaran::findOrFail($id);
         return view('pengeluaran.edit', compact('pengeluaran'));
     }
 
-    /**
-     * Update pengeluaran
-     */
-    public function update(Request $request, Pengeluaran $pengeluaran)
+    public function update(Request $request, $id)
     {
-        $request->validate([
+        $data = $request->validate([
             'tanggal_transaksi' => 'required|date',
-            'nomor_faktur'      => 'nullable|string|max:50',
-            'nama_supplier'     => 'nullable|string|max:100',
-            'jenis_pengeluaran' => 'required|string|max:100',
-            'jumlah'            => 'required|numeric|min:1',
-            'harga_satuan'      => 'required|numeric|min:0',
-            'harga_sudah_ppn'   => 'nullable|boolean',
+            'kategori' => 'required|string',
+            'jenis_produk' => 'required|string',
+            'keterangan' => 'nullable|string',
+            'jumlah_barang' => 'nullable|integer',
+            'harga_satuan' => 'nullable|numeric',
             'metode_pembayaran' => 'required|string',
-            'catatan'           => 'nullable|string',
-            'bukti_transaksi'   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'catatan' => 'nullable|string',
+            'bukti' => 'nullable|image|max:2048'
         ]);
 
-        $subtotal = $request->jumlah * $request->harga_satuan;
+        $pengeluaran = Pengeluaran::findOrFail($id);
 
-        if ($request->harga_sudah_ppn) {
-            $dasar = (100 / 112) * $subtotal;
-            $ppn   = 0.12 * $dasar;
-            $total = $subtotal;
-        } else {
-            $ppn   = 0.11 * $subtotal;
-            $total = $subtotal + $ppn;
+        $subtotal = ($data['jumlah_barang'] ?? 0) * ($data['harga_satuan'] ?? 0);
+        $ppn = $subtotal * 0.11;
+        $total = $subtotal + $ppn;
+
+        $data['subtotal'] = $subtotal;
+        $data['ppn'] = $ppn;
+        $data['total'] = $total;
+
+        if ($request->hasFile('bukti')) {
+            $data['bukti'] = $request->file('bukti')->store('bukti_pengeluaran', 'public');
         }
 
-        $buktiPath = $pengeluaran->bukti_transaksi;
-        if ($request->hasFile('bukti_transaksi')) {
-            $buktiPath = $request->file('bukti_transaksi')->store('bukti_pengeluaran', 'public');
-        }
-
-        $pengeluaran->update([
-            'tanggal_transaksi' => $request->tanggal_transaksi,
-            'nomor_faktur'      => $request->nomor_faktur,
-            'nama_supplier'     => $request->nama_supplier,
-            'jenis_pengeluaran' => $request->jenis_pengeluaran,
-            'jumlah'            => $request->jumlah,
-            'harga_satuan'      => $request->harga_satuan,
-            'subtotal'          => $subtotal,
-            'ppn'               => $ppn,
-            'total'             => $total,
-            'harga_sudah_ppn'   => $request->harga_sudah_ppn ?? 0,
-            'metode_pembayaran' => $request->metode_pembayaran,
-            'catatan'           => $request->catatan,
-            'bukti_transaksi'   => $buktiPath,
-        ]);
+        $pengeluaran->update($data);
 
         return redirect()->route('pengeluaran.index')->with('success', 'Data pengeluaran berhasil diperbarui.');
     }
 
-    /**
-     * Hapus data pengeluaran
-     */
-    public function destroy(Pengeluaran $pengeluaran)
+    public function destroy($id)
     {
-        if ($pengeluaran->bukti_transaksi && \Storage::disk('public')->exists($pengeluaran->bukti_transaksi)) {
-            \Storage::disk('public')->delete($pengeluaran->bukti_transaksi);
+        $pengeluaran = Pengeluaran::findOrFail($id);
+
+        if ($pengeluaran->bukti && \Storage::disk('public')->exists($pengeluaran->bukti)) {
+            \Storage::disk('public')->delete($pengeluaran->bukti);
         }
 
         $pengeluaran->delete();
