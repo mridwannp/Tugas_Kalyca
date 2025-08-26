@@ -42,7 +42,7 @@
 
     {{-- Tabel Masukan --}}
     <div class="card mb-4">
-        <div class="card-header fw-bold">PPN Keluaran (Penjualan)</div>
+        <div class="card-header fw-bold">PPN Masukan</div>
         <div class="card-body p-0">
             <table class="table table-bordered mb-0">
                 <thead class="table-secondary text-center">
@@ -81,7 +81,7 @@
 
     {{-- Tabel Pengeluaran --}}
     <div class="card mb-4">
-        <div class="card-header fw-bold">PPN Masukan (Pengeluaran Umum)</div>
+        <div class="card-header fw-bold">PPN Keluaran</div>
         <div class="card-body p-0">
             <table class="table table-bordered mb-0">
                 <thead class="table-secondary text-center">
