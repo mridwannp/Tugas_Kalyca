@@ -28,7 +28,7 @@
             <tbody>
                 @forelse ($keluarans as $item)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('d M Y') }}</td>
                     <td>{{ $item->kategori }}</td>
                     <td>{{ $item->keterangan }}</td>
                     <td>{{ $item->jumlah_barang }}</td>
